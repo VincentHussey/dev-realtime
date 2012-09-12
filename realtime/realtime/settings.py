@@ -1,4 +1,18 @@
 # Django settings for realtime project.
+import os
+import django
+import sys
+PROJECT_ROOT = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(PROJECT_ROOT))
+DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
+SITE_ROOT = '/opt/floodmapsv2/'
+
+# django.contrib.gis requirements
+LD_LIBRARY_PATH='/usr/local/lib'
+GDAL_LIBRARY_PATH = '/usr/local/lib/libgdal.so'
+GDAL_DATA = '/usr/local/share/'
+GEOS_LIBRARY_PATH = '/usr/local/lib/libgeos_c.so'
+PROJ_LIB='/usr/local/share/proj'
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -9,12 +23,13 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+# use local_settings for actual credentials.
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
+        'ENGINE': 'django.contrib.gis.db.backends.postgis', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'database',                      # Or path to database file if using sqlite3.
+        'USER': 'user',                      # Not used with sqlite3.
+        'PASSWORD': 'password',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
@@ -119,6 +134,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    # '',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -149,3 +165,12 @@ LOGGING = {
         },
     }
 }
+
+# Use local settings
+try:
+    LOCAL_SETTINGS
+except NameError:
+    try:
+        from local_settings import *
+    except ImportError:
+        pass
